@@ -47,10 +47,10 @@ virtual_machines = {
       disk_size_gb         = 128
     }
 
-  tags = {
-    owner      = "Aditya"
-    Created_by = "AVM Terraform"
-    Managed_by = "Terraform"
-}
+    tags = {
+      owner      = "Aditya"
+      Created_by = "AVM Terraform"
+      Managed_by = "Terraform"
+    }
   }
 }
