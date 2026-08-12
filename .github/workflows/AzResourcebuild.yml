@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Script/AVM/**'
+      - 'AVM/**'
   pull_request:
     branches: [main]
     paths:
-      - 'Script/AVM/**'
+      - 'AVM/**'
   workflow_dispatch:
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Script/AVM
+        working-directory: ./AVM
 
     steps:
       - name: Checkout repo
