@@ -1,4 +1,4 @@
-name: 'AVM Terraform Azure Deploy'
+name: 'AVM Terraform Azure Plan'
 
 on:
   push:
