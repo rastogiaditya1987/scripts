@@ -1,30 +1,40 @@
 terraform {
-  required_version = ">= 1.10.0, < 2.0.0"
+  required_version = "~> 1.15.0"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.116.0, < 5.0.0"
     }
+
     azapi = {
       source  = "azure/azapi"
       version = ">= 2.4.0"
     }
+
     modtm = {
       source  = "azure/modtm"
       version = "~> 0.3"
     }
+
     random = {
       source  = "hashicorp/random"
       version = ">= 3.5.0"
     }
+
     tls = {
       source  = "hashicorp/tls"
       version = ">= 4.0.0"
     }
   }
-  # Using local state - .terraform.tfstate will be stored in the repository
-  # No backend configuration needed
+
+  backend "azurerm" {
+    resource_group_name  = "terraform-state-rg"
+    storage_account_name = "uniquetfstateaccount"
+    container_name       = "tfstate"
+    key                  = "avm.tfstate"
+    use_oidc             = true
+  }
 }
 
 provider "azurerm" {
