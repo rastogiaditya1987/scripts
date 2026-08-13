@@ -56,7 +56,7 @@ module "virtual_network" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.7.3"
+  version = "0.8.0"
 
   name      = var.storage_account_name
   location  = var.location
