@@ -74,18 +74,6 @@ module "storage_account" {
       name = var.storage_container_name
     }
   }
-
-  # Required blob_properties configuration
-  blob_properties = {
-    change_feed_enabled             = false
-    default_service_version         = null
-    last_access_time_enabled        = false
-    versioning_enabled              = false
-    delete_retention_policy         = null
-    container_delete_retention_policy = null
-    restore_policy                  = null
-  }
-
   tags = var.tags
 }
 
