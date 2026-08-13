@@ -1,14 +1,15 @@
-name: 'AVM Terraform Azure Plan & Apply-Approval'
+name: AVM Terraform Azure Plan & Apply-Approval
 
 on:
   push:
     branches: [main]
     paths:
-      - 'AVM/**'
+      - "AVM/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
     paths:
-      - 'AVM/**'
+      - "AVM/**"
   workflow_dispatch:
 
 permissions:
@@ -24,14 +25,15 @@ env:
 
 jobs:
   plan:
-    name: 'Terraform Plan'
+    name: Terraform Plan
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./AVM
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Terraform
@@ -40,37 +42,45 @@ jobs:
           terraform_version: 1.15.7
 
       - name: Terraform Format
-        run: terraform fmt -recursive
+        run: terraform fmt -check -recursive
 
       - name: Terraform Init
-        run: terraform init -upgrade
+        run: terraform init -input=false
 
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        id: plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Display Terraform Plan
+        run: terraform show -no-color tfplan
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: AVM/tfplan
-          retention-days: 5
+          retention-days: 1
 
   apply:
-    name: 'Terraform Apply'
+    name: Terraform Apply
     needs: plan
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    if: >
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch')
+
     runs-on: ubuntu-latest
-    environment: production   # <-- gate: requires manual approval
+    environment: production
+
     defaults:
       run:
         working-directory: ./AVM
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Terraform
@@ -79,7 +89,7 @@ jobs:
           terraform_version: 1.15.7
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Download plan artifact
         uses: actions/download-artifact@v4
@@ -88,4 +98,4 @@ jobs:
           path: AVM
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -input=false -auto-approve tfplan
