@@ -56,7 +56,7 @@ module "virtual_network" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.8.0"
+  version = "0.7.3"
 
   name      = var.storage_account_name
   location  = var.location
@@ -75,7 +75,7 @@ module "storage_account" {
     }
   }
 
-  # Minimal blob_properties configuration
+  # Required blob_properties configuration
   blob_properties = {
     change_feed_enabled             = false
     default_service_version         = null
