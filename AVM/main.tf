@@ -34,12 +34,12 @@ module "resource_group" {
 
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.22.1"
+  version = "0.8.1"
 
   name                = var.virtual_network_name
   location            = var.location
+  resource_group_name = module.resource_group.name
   address_space       = var.virtual_network_address_space
-  parent_id           = module.resource_group.resource_id
 
   # optional
   enable_telemetry = false
@@ -56,7 +56,7 @@ module "virtual_network" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.8.0"
+  version = "0.7.3"
 
   name      = var.storage_account_name
   location  = var.location
