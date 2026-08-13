@@ -23,12 +23,8 @@ terraform {
       version = ">= 4.0.0"
     }
   }
-  backend "azurerm" {
-    resource_group_name  = "Aditya-RG"
-    storage_account_name = "saadityastorage001"
-    container_name       = "tfstate-adi"
-    key                  = "avm.terraform.tfstate"
-  }
+  # Using local state - .terraform.tfstate will be stored in the repository
+  # No backend configuration needed
 }
 
 provider "azurerm" {
