@@ -45,6 +45,9 @@ jobs:
       - name: Terraform Init
         run: terraform init -upgrade
 
+      - name: Terraform validate
+        run: terraform validate
+
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=tfplan
