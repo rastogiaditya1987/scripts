@@ -38,8 +38,8 @@ module "virtual_network" {
 
   name                = var.virtual_network_name
   location            = var.location
-  resource_group_name = module.resource_group.name
   address_space       = var.virtual_network_address_space
+  parent_id           = module.resource_group.resource_id
 
   # optional
   enable_telemetry = false
