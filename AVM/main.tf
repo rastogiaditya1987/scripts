@@ -34,7 +34,7 @@ module "resource_group" {
 
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.8.1"
+  version = "0.22.1"
 
   name                = var.virtual_network_name
   location            = var.location
