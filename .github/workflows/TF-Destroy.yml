@@ -1,0 +1,110 @@
+name: 'AVM Terraform Azure Destroy'
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Type "destroy" to confirm you want to destroy resources'
+        required: true
+        type: string
+      target_resource:
+        description: 'Optional: specific resource/module address to destroy (e.g. module.storage_account). Leave blank to destroy everything.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  validate-input:
+    name: 'Validate confirmation'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation phrase
+        run: |
+          if [ "${{ github.event.inputs.confirm_destroy }}" != "destroy" ]; then
+            echo "❌ Confirmation phrase did not match. You must type 'destroy' exactly to proceed."
+            exit 1
+          fi
+          echo "✅ Confirmation accepted."
+
+      - name: Show destroy scope
+        run: |
+          if [ -n "${{ github.event.inputs.target_resource }}" ]; then
+            echo "⚠️ Scoped destroy requested for: ${{ github.event.inputs.target_resource }}"
+          else
+            echo "⚠️ FULL destroy requested — ALL resources in state will be destroyed."
+          fi
+
+  destroy-plan:
+    name: 'Terraform Destroy Plan'
+    needs: validate-input
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./AVM
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy Plan
+        run: |
+          if [ -n "${{ github.event.inputs.target_resource }}" ]; then
+            terraform plan -destroy -target="${{ github.event.inputs.target_resource }}" -out=tfdestroyplan
+          else
+            terraform plan -destroy -out=tfdestroyplan
+          fi
+
+      - name: Upload destroy plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfdestroyplan
+          path: AVM/tfdestroyplan
+          retention-days: 5
+
+  destroy-apply:
+    name: 'Terraform Destroy Apply'
+    needs: destroy-plan
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: ./AVM
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Download destroy plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfdestroyplan
+          path: AVM
+
+      - name: Terraform Destroy Apply
+        run: terraform apply -auto-approve tfdestroyplan
