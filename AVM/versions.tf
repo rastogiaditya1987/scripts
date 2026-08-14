@@ -33,7 +33,11 @@ terraform {
   storage_account_name = "adistoragesa"
   container_name       = "adi-container"
   key                  = "terraform.tfstate"
-    use_oidc             = true
+  use_oidc             = true
+
+use_azuread_auth = true
+subscription_id  = "a587b56f-da71-4e67-b31f-8b03bc7e50ac"
+tenant_id        = "32c37a62-9306-4b6e-8c4c-ec2e9bcdc260"
   }
 }
 
