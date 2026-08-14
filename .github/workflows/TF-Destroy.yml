@@ -44,14 +44,6 @@ jobs:
           else
             echo "⚠️ FULL destroy requested — ALL resources in state will be destroyed."
           fi
-      - name: Show destroy scope 2
-        run: |
-          if [ -n "${{ github.event.inputs.target_resources }}" ]; then
-            echo "⚠️ Scoped destroy requested for the following resources:"
-            echo "${{ github.event.inputs.target_resources }}" | tr ',' '\n' | sed 's/^ *//;s/ *$//'
-          else
-            echo "⚠️ FULL destroy requested — ALL resources in state will be destroyed."
-          fi
   destroy-plan:
     name: 'Terraform Destroy Plan'
     needs: validate-input
