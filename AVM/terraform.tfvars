@@ -1,4 +1,4 @@
-resource_group_name = "Aditya-RG"
+resource_group_name = "null"
 location            = "Central India"
 
 virtual_network_name          = "Aditya-VNet"
@@ -7,8 +7,8 @@ virtual_network_address_space = ["192.1.0.0/25"]
 subnet_name             = "snet-Aditya"
 subnet_address_prefixes = ["192.1.0.0/27"]
 
-storage_account_name   = "adityastoragesa"
-storage_container_name = "aditya-container"
+storage_account_name   = "adistoragesa"
+storage_container_name = "adi-container"
 
 tags = {
   owner      = "Aditya"
