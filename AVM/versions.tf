@@ -29,10 +29,10 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "Aditya-RG"
-    storage_account_name = "saadityastorage001"
-    container_name       = "tfstate-adi"
-    key                  = "avm.tfstate"
+  resource_group_name  = "Aditya-RG"
+  storage_account_name = "adistoragesa"
+  container_name       = "adi-container"
+  key                  = "terraform.tfstate"
     use_oidc             = true
   }
 }
