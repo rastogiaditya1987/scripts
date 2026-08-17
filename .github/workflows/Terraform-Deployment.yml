@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Terraform init
-        run: terraform init -reconfigure -backend-config="backend.tfbackend"
+        run: terraform init -input=false -reconfigure
 
       - name: Terraform format check
         run: terraform fmt -check
