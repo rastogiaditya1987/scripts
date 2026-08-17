@@ -43,6 +43,7 @@ module "virtual_network" {
 
   # optional
   enable_telemetry = false
+  shared_access_key_enabled = true
 
   subnets = {
     primary = {
