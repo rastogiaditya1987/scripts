@@ -1,0 +1,4 @@
+resource_group_name  = "Aditya-RG"
+storage_account_name = "adistoragesa"
+container_name       = "adi-container"
+key                  = "terraform.tfstate"
