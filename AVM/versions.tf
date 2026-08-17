@@ -25,12 +25,12 @@ terraform {
   }
   # Temporarily commented out - backend doesn't exist yet
   # Uncomment after creating the Azure storage account for state
-  #backend "azurerm" {
-   #  resource_group_name  = "Aditya-RG"
-   #  storage_account_name = "adistoragesa"
-  #   container_name       = "adi-container"
- #    key                  = "terraform.tfstate"
- #  }
+  backend "azurerm" {
+     resource_group_name  = "Aditya-RG"
+     storage_account_name = "adistoragesa"
+     container_name       = "adi-container"
+     key                  = "terraform.tfstate"
+   }
 }
 
 provider "azurerm" {
