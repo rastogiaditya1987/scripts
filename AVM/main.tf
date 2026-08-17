@@ -43,7 +43,6 @@ module "virtual_network" {
 
   # optional
   enable_telemetry = false
-  shared_access_key_enabled = true
 
   subnets = {
     primary = {
@@ -64,6 +63,7 @@ module "storage_account" {
   parent_id = module.resource_group.resource_id
 
   enable_telemetry = false
+  shared_access_key_enabled = true
 
   account_kind             = "StorageV2"
   account_tier             = "Standard"
