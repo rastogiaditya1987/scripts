@@ -1,0 +1,79 @@
+name: Terraform Deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-production
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: true
+  ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.7
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # TEMPORARY: Run once to recover key authentication, then remove.
+      - name: Re-enable storage key authentication
+        run: |
+          az storage account update \
+            --resource-group "Aditya-RG" \
+            --name "adistoragesa" \
+            --allow-shared-key-access true
+
+          result=$(az storage account show \
+            --resource-group "Aditya-RG" \
+            --name "adistoragesa" \
+            --query "allowSharedKeyAccess" \
+            --output tsv)
+
+          if [ "$result" != "true" ]; then
+            echo "Storage shared-key authentication is not enabled."
+            exit 1
+          fi
+
+      - name: Terraform init
+        run: terraform init -reconfigure -backend-config="backend.tfbackend"
+
+      - name: Terraform format check
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -input=false -lock-timeout=5m -out=tfplan
+
+      - name: Terraform apply
+        run: terraform apply -input=false -auto-approve -lock-timeout=5m tfplan
+
+      - name: Preserve failed Terraform state
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: errored-terraform-state
+          path: errored.tfstate
+          if-no-files-found: ignore
+          retention-days: 7
