@@ -48,7 +48,7 @@ jobs:
         run: terraform init -input=false
 
       - name: Remove stale Terraform lock
-        working-directory: path/to/terraform
+        working-directory: ./AVM
         env:
           ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
         run: terraform force-unlock -force 2f27ab5f-f9c5-9fac-8c51-9c8a5d2dbefb
