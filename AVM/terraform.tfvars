@@ -1,4 +1,4 @@
-resource_group_name = "null"
+resource_group_name = "Aditya-RG"
 location            = "Central India"
 
 virtual_network_name          = "Aditya-VNet"
